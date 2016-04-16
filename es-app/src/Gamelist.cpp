@@ -7,6 +7,7 @@
 
 #include "pugixml/pugixml.hpp"
 #include <boost/filesystem.hpp>
+#include <unordered_map>
 
 namespace fs = boost::filesystem;
 
@@ -143,7 +144,7 @@ void parseGamelist(SystemData* system)
 	}
 }
 
-void addFileDataNode(pugi::xml_node& parent, const FileData* file, const char* tag, SystemData* system)
+pugi::xml_node addFileDataNode(pugi::xml_node& parent, const FileData* file, const char* tag, SystemData* system)
 {
 	//create game and add to parent node
 	pugi::xml_node newNode = parent.append_child(tag);
@@ -164,6 +165,7 @@ void addFileDataNode(pugi::xml_node& parent, const FileData* file, const char* t
 		// try and make the path relative if we can so things still work if we change the rom folder location in the future
 		newNode.prepend_child("path").text().set(makeRelativePath(file->getPath(), system->getStartPath(), false).generic_string().c_str());
 	}
+    return newNode;
 }
 
 void updateGamelist(SystemData* system)
@@ -206,6 +208,13 @@ void updateGamelist(SystemData* system)
 	root.remove_attribute("sortid");
 	root.append_attribute("sortid") = std::to_string(system->sortId).c_str();
 
+    std::unordered_map<std::string, pugi::xml_node> xmlGames;
+
+    for(pugi::xml_node child: root.children()){
+        xmlGames[resolvePath(child.child("path").text().get(), system->getStartPath(), true).generic_string()] = child;
+    }
+
+
 	//now we have all the information from the XML. now iterate through all our games and add information from there
 	FileData* rootFolder = system->getRootFolder();
 	if (rootFolder != nullptr)
@@ -216,31 +225,12 @@ void updateGamelist(SystemData* system)
 		std::vector<FileData*>::const_iterator fit = files.cbegin();
 		while(fit != files.cend())
 		{
-			const char* tag = ((*fit)->getType() == GAME) ? "game" : "folder";
-
-			// check if the file already exists in the XML
-			// if it does, remove it before adding
-			for(pugi::xml_node fileNode = root.child(tag); fileNode; fileNode = fileNode.next_sibling(tag))
-			{
-				pugi::xml_node pathNode = fileNode.child("path");
-				if(!pathNode)
-				{
-					LOG(LogError) << "<" << tag << "> node contains no <path> child!";
-					continue;
-				}
-
-				fs::path nodePath = resolvePath(pathNode.text().get(), system->getStartPath(), true);
-				fs::path gamePath((*fit)->getPath());
-				if(nodePath == gamePath || (fs::exists(nodePath) && fs::exists(gamePath) && fs::equivalent(nodePath, gamePath)))
-				{
-					// found it
-					root.remove_child(fileNode);
-					break;
-				}
-			}
-
+            const char* tag = ((*fit)->getType() == GAME) ? "game" : "folder";
+            auto maybeNode = xmlGames.find((*fit)->getPath().generic_string());
+            if(maybeNode != xmlGames.end())
+                root.remove_child(maybeNode->second);
 			// it was either removed or never existed to begin with; either way, we can add it now
-			addFileDataNode(root, *fit, tag, system);
+			xmlGames[(*fit)->getPath().generic_string()] = addFileDataNode(root, *fit, tag, system);
 
 			++fit;
 		}
