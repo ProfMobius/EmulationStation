@@ -349,6 +349,8 @@ int main(int argc, char* argv[])
 				case SDL_QUIT:
 					running = false;
 					break;
+                default:
+                    LOG(LogInfo) << "Got event " << event.type;
 			}
 		}
 
