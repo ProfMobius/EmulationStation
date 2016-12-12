@@ -322,35 +322,24 @@ int main(int argc, char* argv[])
 		SDL_Event event;
 		while(SDL_PollEvent(&event))
 		{
+            LOG(LogInfo) << "Got event " << event.type;
 			switch(event.type)
 			{
 				case SDL_JOYHATMOTION:
-                    LOG(LogInfo) << "Got event SDL_JOYHATMOTION";
 				case SDL_JOYBUTTONDOWN:
-                    LOG(LogInfo) << "Got event SDL_JOYBUTTONDOWN";
 				case SDL_JOYBUTTONUP:
-                    LOG(LogInfo) << "Got event SDL_JOYBUTTONUP";
 				case SDL_KEYDOWN:
-                    LOG(LogInfo) << "Got event SDL_KEYDOWN";
 				case SDL_KEYUP:
-                    LOG(LogInfo) << "Got event SDL_KEYUP";
 				case SDL_JOYAXISMOTION:
-                    LOG(LogInfo) << "Got event SDL_JOYAXISMOTION";
 				case SDL_TEXTINPUT:
-                    LOG(LogInfo) << "Got event SDL_TEXTINPUT";
 				case SDL_TEXTEDITING:
-                    LOG(LogInfo) << "Got event SDL_TEXTEDITING";
 				case SDL_JOYDEVICEADDED:
-                    LOG(LogInfo) << "Got event SDL_JOYDEVICEADDED";
 				case SDL_JOYDEVICEREMOVED:
-                    LOG(LogInfo) << "Got event SDL_JOYDEVICEREMOVED";
 					InputManager::getInstance()->parseEvent(event, &window);
 					break;
 				case SDL_QUIT:
 					running = false;
 					break;
-                default:
-                    LOG(LogInfo) << "Got event " << event.type;
 			}
 		}
 
