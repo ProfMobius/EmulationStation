@@ -319,9 +319,11 @@ int main(int argc, char* argv[])
 
 	while(running)
 	{
+	    LOG(LogInfo) << "Pooling...";
 		SDL_Event event;
 		while(SDL_PollEvent(&event))
 		{
+		    LOG(LogInfo) << "Got event of type " << event.type;
 			switch(event.type)
 			{
 				case SDL_JOYHATMOTION:
