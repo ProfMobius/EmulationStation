@@ -65,10 +65,15 @@ namespace Renderer
 		if(display_height == 0)
 			display_height = dispMode.h;
 
-		sdlWindow = SDL_CreateWindow("EmulationStation", 
+//		sdlWindow = SDL_CreateWindow("EmulationStation",
+//			SDL_WINDOWPOS_CENTERED_DISPLAY(displayIndex), SDL_WINDOWPOS_CENTERED_DISPLAY(displayIndex),
+//			display_width, display_height,
+//			SDL_WINDOW_OPENGL | (Settings::getInstance()->getBool("Windowed") ? 0 : SDL_WINDOW_FULLSCREEN));
+
+		sdlWindow = SDL_CreateWindow("EmulationStation",
 			SDL_WINDOWPOS_CENTERED_DISPLAY(displayIndex), SDL_WINDOWPOS_CENTERED_DISPLAY(displayIndex),
-			display_width, display_height, 
-			SDL_WINDOW_OPENGL | (Settings::getInstance()->getBool("Windowed") ? 0 : SDL_WINDOW_FULLSCREEN));
+			display_width, display_height,
+			SDL_WINDOW_OPENGL | SDL_WINDOW_INPUT_FOCUS | SDL_WINDOW_ALWAYS_ON_TOP));
 
 		if(sdlWindow == NULL)
 		{
@@ -76,7 +81,7 @@ namespace Renderer
 			return false;
 		}
 
-		SDL_SetWindowInputFocus(sdlWindow);
+//		SDL_SetWindowInputFocus(sdlWindow);
 
 		LOG(LogInfo) << "Created window successfully.";
 
