@@ -73,7 +73,7 @@ namespace Renderer
 		sdlWindow = SDL_CreateWindow("EmulationStation",
 			SDL_WINDOWPOS_CENTERED_DISPLAY(displayIndex), SDL_WINDOWPOS_CENTERED_DISPLAY(displayIndex),
 			display_width, display_height,
-			SDL_WINDOW_OPENGL | SDL_WINDOW_INPUT_FOCUS | SDL_WINDOW_ALWAYS_ON_TOP));
+			SDL_WINDOW_OPENGL | SDL_WINDOW_INPUT_FOCUS | SDL_WINDOW_ALWAYS_ON_TOP);
 
 		if(sdlWindow == NULL)
 		{
