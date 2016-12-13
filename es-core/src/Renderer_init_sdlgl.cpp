@@ -76,6 +76,8 @@ namespace Renderer
 			return false;
 		}
 
+		SDL_SetWindowInputFocus(sdlWindow);
+
 		LOG(LogInfo) << "Created window successfully.";
 
 		//set an icon for the window
